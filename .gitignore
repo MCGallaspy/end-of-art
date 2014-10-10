@@ -1,2 +1,2 @@
 *.sw[a-p]
-curator/static*
+curator/static/*.jpg
