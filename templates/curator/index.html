@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<!-- 
+We want the .imageContainer to be veritcally centered, 
+but first we need to calculate the height of the containing 
+element, namely body. Use jQuery to get the height dynamically. 
+-->
+<style>
+	body { 
+		height: 800px;
+		background-color: SteelBlue; 
+	}
+	div.imageContainer { 
+		margin: auto; 
+		width: 420px;
+		height: 520px; 
+		background-color: Green;
+		position: relative;
+		top: 50%;
+		transform: translateY(-50%); 
+	}
+	img {
+		padding: 10px;
+		height: 400px;
+		width: 400px;
+	}
+	form {
+		padding: 10px;
+	}
+</style>
+<title>Title of the document</title>
+</head>
+
+<body>
+	<div class="imageContainer">
+		<img src="{{ STATIC_URL }}{{ img.path }}">
+		<form action="." method="post">{% csrf_token %}
+		<p> Does it look like art? </p>
+		<input type="hidden" name="imgid" value="{{ img.id }}" />
+		<button type="submit" name="vote" value="upvote">Kinda.</button>
+		<button type="submit" name="vote" value="downvote">Not really.</button>
+		</form>
+	</div>
+</body>
+
+</html>
