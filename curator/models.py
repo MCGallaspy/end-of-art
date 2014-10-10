@@ -6,8 +6,11 @@ class Image(models.Model):
 	path = models.FilePathField(path="/home/gallaspy/endOfArt/images", recursive=True)
 	posVotes = models.IntegerField()
 	negVotes = models.IntegerField()
-	generatingSequence = models.TextField()
 	def __unicode__(self):
 		return self.path
 	def voteDiff(self):
 		return self.posVotes - self.negVotes
+
+class Figure(models.Model):
+	image = models.ForeignKey(Image)
+	polygons = models.TextField()
