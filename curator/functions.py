@@ -27,8 +27,7 @@ def currentBatch():
 def setNewBatch():
 	curBatch = currentBatch()
 	numNewImgs = len(curBatch)
-	gen = ImageGenerator()
-	newBatch = gen.breed(curBatch, numNewImgs)
+	ImageGenerator.breed(curBatch, numNewImgs)
 	for img in newBatch:
 		img.isCurrent = True
 		img.save()

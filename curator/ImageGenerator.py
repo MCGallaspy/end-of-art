@@ -1,6 +1,7 @@
 from PIL import Image as PILImage, ImageDraw
 from random import randint, random
 from models import Image, Figure
+from math import atan2, sqrt
 
 # Some settings about the images
 IMGWIDTH = 400 #pixels
@@ -37,7 +38,10 @@ class ImageGenerator():
 				break;
 
 		rgb = (randint(0,COLOR_DEPTH), randint(0,COLOR_DEPTH), randint(0,COLOR_DEPTH))
-
+	
+		# To ensure no self-intersecting polygons
+		verts = convexHull(verts)
+		
 		return (verts, rgb)
 
 	# Okay, trying a whole new approach to generating images
@@ -57,6 +61,8 @@ class ImageGenerator():
 			draw = ImageDraw.Draw(newPILImg)
 			for f in figures:
 				for p in f:
+					print f
+					print p
 					verts = p[0]
 					rgb = p[1]
 					draw.polygon(verts, fill=rgb)
@@ -73,7 +79,8 @@ class ImageGenerator():
 				newFig.polygons = str(f)
 				newFig.save()
 	
-	def breed(self, curBatch, numNewImgs):
+	@staticmethod
+	def breed(curBatch, numNewImgs):
 		return 0	
 
 	def _old_breed(self, curBatch, numNewImgs):
@@ -104,3 +111,45 @@ class ImageGenerator():
 			newBatch.append(newImg)
 		return newBatch
 
+# Determine the convex hull of a set of points using Graham scan algorithm
+# Stupid scipy version 0.10.1 doesn't have it... Damn you Debian stable repositories!
+def convexHull(points):
+
+	# First find the point with the lowest y and x coordinates. Call it P.
+	def cmprPnts(q1, q2):
+		if q1[1] < q2[1]:
+			return q1
+		elif q1[1] == q2[1]:
+			if q1[0] < q2[0]:
+				return q1
+			else:
+				return q2
+		else:
+			return q2
+
+	# Find the bottom left-est point and put it first in the array
+	# and sort all the other points by angle
+	P = reduce(cmprPnts, points)
+	points.remove(P)
+	def angle(Q):
+		return atan2(Q[1]-P[1], Q[0]-P[0])
+	points.sort(key=angle)
+	points.insert(0,P)
+	points.append(P)
+
+	#Then we check each successive triple of pts for left turns or right turns
+	def leftTurn(q1, q2, q3):
+		val = (q2[0]-q1[0])*(q3[1]-q1[1]) - (q2[1]-q1[1])*(q3[0]-q1[0])
+		if val >= 0:
+			return True
+		else:
+			return False
+	hull = [P]
+	for i in range(1, len(points)-1):
+		hull.append(points[i])
+		q1 = hull[-2]
+		q2 = hull[-1]
+		q3 = points[i+1]
+		if not leftTurn(q1,q2,q3):
+			hull.pop()	
+	return hull	
