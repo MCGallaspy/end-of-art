@@ -1,3 +1,18 @@
+Update 11/13
+Okay, so below I had an idea for learning discrete CPDs in a Bayesian network, but my original idea of having completely general CPDs makes the problem size intractably large using a learning method called maximum likelihood estimation (MLE). Namely, general CPDs in this case need a huge number of training cases to get a good estimate of the true CPD. I could attack this in a few ways:
+
+* Choose less general CPDs and learn parameters with MLE. This would mean coming up with parametric rules for how parent nodes influnce children, or even a set of distinct parametric rules that can be separately evaluated and the best one is retained. In order for this to be tractable, the size of the parameter space should be less than or equal to the number of training cases. I haven't estimated a reasonable number of training cases (since presumably it would depend on the rate of user input), but I'll just throw out 10,000. So I want to pick a scheme with a parameter space size less than 10,000, meaning the product of all the numbers of possible choices of all the parameters should be less than 10,000.
+* Keep very general CPDs but learn them with a different method other than MLE. Another method I've read about but not really looked into is called kernel density estimation, but it doesn't seem like it would produce good results here either. What other methods for CPD learning are there? I'm investigating.
+* Choose parametric CPDs anyway and learn them with a better scheme than MLE. MLE seems like a very naive learning method. A more judicious choice of CPDs could only help, but it's very difficult to come up with a likely CPD for the triangle-drawing method I've outlined below.
+* Choose a drawing scheme other than the triangle-drawing method, one that suggests a more judicious choice of CPDs.
+* Reduce CPD size by choosing much smaller images, perhaps even grayscale.
+* Scrap the Bayesian net approach and choose a different machine learning technique. I'll have to read more about ML in general to decide the viability of another approach.
+
+In fact, thinking about it, the triangle-drawing method has more parameters than just naively considering all the pixels in an image as independent parents to artiness.
+
+Here's a StackOverflow question I asked on this topic: http://stackoverflow.com/questions/26917316/learning-nonparametric-discrete-cpds-in-a-bayesian-network
+
+--------------
 I've come up with an idea for generating images, thoughts below. The main point: use probabilistic graphical models and parameter learning to generate images, and learn the parameters incrementally using user votes as a score function for candidates.
 
 Some links of interest:
